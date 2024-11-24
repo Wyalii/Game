@@ -5,22 +5,24 @@ import { UsersContext } from "@/app/page";
 import { useContext } from "react";
 
 
-export default function RegisterForm(){
+export default function LoginForm(){
 
-    const context = useContext(UsersContext);
+    const context = useContext(UsersContext)
+
     if(context === null)
     {
-      return(
-        <div>Loading...</div>
-      )
+        return(
+            <div>Loading...</div>
+        )
     }
-    const {hasAccount,setHasAccount} = context;
+
+    const {hasAccount, setHasAccount} = context;
   return(
       <div className="h-3/4 w-2/4 bg-white rounded flex items-center flex-col gap-5 pt-3">
           <Image alt="Shield image" src={shield} className="w-[100px]"></Image>
 
           <div className="flex justify-center flex-col items-center">
-             <h1 className="font-mono text-md md:text-3xl">Create Your Account</h1>
+             <h1 className="font-mono text-md md:text-3xl">Login to Your Account</h1>
              <p className="text-sm text-gray-500">Provide your details.</p>
           </div>
 
@@ -34,7 +36,7 @@ export default function RegisterForm(){
             </div>
 
             <div className="w-full flex justify-center">
-               <button className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded">Sign Up</button>
+               <button className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded">Login</button>
             </div>
           </div>
 
@@ -44,16 +46,16 @@ export default function RegisterForm(){
              <hr className="flex-grow border-t border-purple-600" />
           </div>
 
-          <div className="font-mono text-xs sm:text-lg">Register With Google</div>
+          <div className="font-mono text-xs sm:text-lg">Login With Google</div>
 
           <div className="sm: w-1/2 max-w-xs bg-purple-600 h-12 rounded flex justify-center items-center gap-1 cursor-pointer">
             <Image src={google} alt="google logo" className="w-[50px]"></Image>
-            <div className="text-white font-mono text-xs sm:text-lg">Sign Up with google</div>
+            <div className="text-white font-mono text-xs sm:text-lg">Login with google</div>
           </div>
 
           <div className="flex justify-center items-center gap-2">
-            <div>Already have an Account?</div>
-            <div onClick={()=> setHasAccount(true)} className="cursor-pointer">Login</div>
+            <div>Dont have an account?</div>
+            <div onClick={()=> setHasAccount(false)} className="cursor-pointer">Register</div>
           </div>
 
 
