@@ -9,19 +9,27 @@ const dbConfig: config = {
     options: {
         encrypt: true,
         enableArithAbort: true,
+        trustServerCertificate: true,
     }
 
 }
 
 let connectionPool: ConnectionPool | null 
 
-export async function GetDbConnecyion(): Promise<ConnectionPool> {
+export async function GetDbConnection(): Promise<ConnectionPool> {
  
-    if(connectionPool)
-    {
+    try {
+        if(connectionPool && connectionPool.connected)
+        {
+            return connectionPool
+        }
+        
+        connectionPool = await sql.connect(dbConfig)
+        console.log("Connected to DB Successfully.")
         return connectionPool
+    } catch (error) {
+        console.error("Failed to Connect to DB" + error)
+        connectionPool = null
+        throw new Error("Database connection failed. Check configuration or network." + error);
     }
-
-    connectionPool = await sql.connect(dbConfig)
-    return connectionPool
 }

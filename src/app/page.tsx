@@ -14,6 +14,9 @@ export const UsersContext = createContext<UsersContextType | null>(null)
 export default function Home() {
 
   const [hasAccount,setHasAccount] = useState<boolean>(false);
+  const [UserEmail,setUserEmail] = useState<string>("")
+  const [UserPassword,setUserPassword] = useState<string>("")
+  const [Message, setMessage] = useState<string>("")
   return (
      <UsersContext.Provider value = {{hasAccount, setHasAccount}}>
        <div className="h-full bg-slate-700 flex items-center justify-center">

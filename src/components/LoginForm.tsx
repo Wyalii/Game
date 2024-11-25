@@ -2,7 +2,8 @@ import google from "@/images/google.svg";
 import Image from "next/image";
 import shield from "@/images/shield.png"
 import { UsersContext } from "@/app/page";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+
 
 
 export default function LoginForm(){
@@ -17,6 +18,43 @@ export default function LoginForm(){
     }
 
     const {hasAccount, setHasAccount} = context;
+    const [UserEmail, setUserEmail] = useState<string>("")
+    const [UserPassword,setUserPassword] = useState<string>("")
+    const [Message,setMessage] = useState<string>("")
+
+    async function Login() {
+      try {
+        const request = await fetch("/api/users/loginUser",{
+          method:'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email:UserEmail,
+            password:UserPassword,
+          })
+
+        })
+        console.log(`Status: ${request.status}`);
+        console.log(`Headers:`, request.headers);
+        console.log(request + "this is request sent by the user.")
+
+        const response = await request.json()
+        console.log({response} + "this is response returned by the server.")
+        if(!request.ok)
+        {
+          setMessage(response.error)
+          console.log(Message + "this is message of response.")
+          return
+        }
+
+        setMessage(response.message)
+        console.log(Message)
+      } catch (error) {
+        console.log(error)
+
+      }
+    }
   return(
       <div className="h-3/4 w-2/4 bg-white rounded flex items-center flex-col gap-5 pt-3">
           <Image alt="Shield image" src={shield} className="w-[100px]"></Image>
@@ -28,15 +66,15 @@ export default function LoginForm(){
 
           <div className="flex flex-col w-full gap-8">
             <div className="w-full flex justify-center">
-              <input placeholder="Email" type="email" className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"></input>
+              <input onChange={(e)=> setUserEmail(e.target.value)} placeholder="Email" type="email" className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"></input>
             </div>
 
             <div className="w-full flex justify-center">
-              <input placeholder="Password" type="password" className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded"></input>
+              <input onChange={(e)=> setUserPassword(e.target.value)} placeholder="Password" type="password" className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded"></input>
             </div>
 
             <div className="w-full flex justify-center">
-               <button className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded">Login</button>
+               <button onClick = {Login} className="placeholder:text-xs sm:placeholder:text-sm sm: w-1/2 max-w-xs focus:outline-none h-10 text-center bg-purple-600 text-white placeholder-white rounded">Login</button>
             </div>
           </div>
 
