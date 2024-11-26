@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import RegisterForm from "@/components/RegisterForm";
 import LoginForm from "@/components/LoginForm";
 import React, { createContext, useContext, useState } from "react";
@@ -8,22 +8,16 @@ type UsersContextType = {
   setHasAccount: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const UsersContext = createContext<UsersContextType | null>(null)
-
+export const UsersContext = createContext<UsersContextType | null>(null);
 
 export default function Home() {
+  const [hasAccount, setHasAccount] = useState<boolean>(false);
 
-  const [hasAccount,setHasAccount] = useState<boolean>(false);
-  const [UserEmail,setUserEmail] = useState<string>("")
-  const [UserPassword,setUserPassword] = useState<string>("")
-  const [Message, setMessage] = useState<string>("")
   return (
-     <UsersContext.Provider value = {{hasAccount, setHasAccount}}>
-       <div className="h-full bg-slate-700 flex items-center justify-center">
-       {
-         hasAccount ? <LoginForm></LoginForm> : <RegisterForm></RegisterForm>
-       }
+    <UsersContext.Provider value={{ hasAccount, setHasAccount }}>
+      <div className="h-full bg-slate-700 flex items-center justify-center">
+        {hasAccount ? <LoginForm></LoginForm> : <RegisterForm></RegisterForm>}
       </div>
-     </UsersContext.Provider>
+    </UsersContext.Provider>
   );
 }
