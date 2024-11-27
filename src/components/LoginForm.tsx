@@ -3,6 +3,7 @@ import Image from "next/image";
 import shield from "@/images/shield.png";
 import { UsersContext } from "@/app/page";
 import { useContext, useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
   const context = useContext(UsersContext);
