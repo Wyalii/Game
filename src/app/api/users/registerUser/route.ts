@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GetDbConnection } from "@/db/db";
+import Database from "@/db/db";
 import bcrypt from "bcryptjs";
-import sql from "mssql";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,15 +14,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const db = await GetDbConnection();
+    const checkQuery = `SELECT * FROM public."RegisteredUsers" WHERE "Email" = $1`;
+    const checkResult = await Database(checkQuery, [email]);
 
-    const checkQuery = `SELECT * FROM users WHERE email = @email`;
-    const checkResult = await db
-      .request()
-      .input("email", sql.VarChar(255), email)
-      .query(checkQuery);
-
-    if (checkResult.recordset.length > 0) {
+    if (checkResult.length > 0) {
       return NextResponse.json(
         { error: "User with that Email is already registered." },
         { status: 409 }
@@ -32,12 +26,8 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const query = `INSERT INTO users (email, pass) VALUES(@email, @password)`;
-    const result = await db
-      .request()
-      .input("email", sql.VarChar(255), email)
-      .input("password", sql.VarChar(255), hashedPassword)
-      .query(query);
+    const insertQuery = `INSERT INTO public."RegisteredUsers" ("Email", "Password") VALUES($1, $2)`;
+    await Database(insertQuery, [email, hashedPassword]);
 
     return NextResponse.json(
       { message: "user registered successfully" },

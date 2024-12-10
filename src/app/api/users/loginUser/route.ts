@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GetDbConnection } from "@/db/db";
+import Database from "@/db/db";
 import bcrypt from "bcryptjs";
-import sql from "mssql";
 import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
@@ -16,21 +15,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const db = await GetDbConnection();
+    const query = `SELECT * FROM public."RegisteredUsers" WHERE "Email" = $1`;
+    const result = await Database(query, [email]);
 
-    const query = `SELECT * FROM users WHERE email = @email`;
-    const result = await db
-      .request()
-      .input("email", sql.VarChar(255), email)
-      .query(query);
-
-    if (result.recordset.length === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const user = result.recordset[0];
+    const user = result[0];
 
-    const comparePassword = await bcrypt.compare(password, user.pass);
+    const comparePassword = await bcrypt.compare(password, user.Password);
 
     if (!comparePassword) {
       return NextResponse.json(
