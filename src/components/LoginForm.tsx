@@ -86,21 +86,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      <div className="flex items-center w-full">
-        <hr className="flex-grow border-t border-purple-600" />
-        <span className="mx-4 text-gray-500 font-mono text-xl">OR</span>
-        <hr className="flex-grow border-t border-purple-600" />
-      </div>
-
-      <div className="font-mono text-xs sm:text-lg">Login With Google</div>
-
-      <div className="sm: w-1/2 max-w-xs bg-purple-600 h-12 rounded flex justify-center items-center gap-1 cursor-pointer">
-        <Image src={google} alt="google logo" className="w-[50px]"></Image>
-        <div className="text-white font-mono text-xs sm:text-lg">
-          Login with google
-        </div>
-      </div>
-
       <div className="flex justify-center items-center gap-2">
         <div>Dont have an account?</div>
         <div onClick={() => setHasAccount(false)} className="cursor-pointer">
