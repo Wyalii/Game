@@ -1,7 +1,7 @@
 "use client";
 import RegisterForm from "@/components/RegisterForm";
 import LoginForm from "@/components/LoginForm";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useState } from "react";
 
 type UsersContextType = {
   hasAccount: boolean;

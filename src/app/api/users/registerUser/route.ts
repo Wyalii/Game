@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Database from "@/db/db";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,11 +29,23 @@ export async function POST(req: NextRequest) {
 
     const insertQuery = `INSERT INTO public."RegisteredUsers" ("Email", "Password") VALUES($1, $2)`;
     await Database(insertQuery, [email, hashedPassword]);
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-    return NextResponse.json(
-      { message: "user registered successfully" },
+    const response = NextResponse.json(
+      { message: "user registered successfully", redirectTo: "/GamePage" },
       { status: 201 }
     );
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 3600,
+    });
+
+    return response;
   } catch (error) {
     console.error("Error details:", error);
     return NextResponse.json(

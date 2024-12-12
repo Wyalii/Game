@@ -1,33 +1,28 @@
-import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token");
+export default function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  console.log("Middleware triggered. Current path:", path);
+  const token = req.cookies.get("token")?.value || "";
 
-  if (!token && path === "/ProfilePage") {
-    console.log("No token, redirecting to home page.");
-    return NextResponse.redirect(new URL("/", req.url));
+  console.log("Token:", token);
+  console.log("Path:", path);
+
+  const isPublicPath = path === "/";
+  const isGamePage = path === "/GamePage";
+
+  if (isPublicPath && token) {
+    console.log("Redirecting to /GamePage because token exists.");
+    return NextResponse.redirect(new URL("/GamePage", req.nextUrl));
   }
 
-  if (token && path === "/") {
-    console.log("Token present, redirecting to ProfilePage.");
-    return NextResponse.redirect(new URL("/ProfilePage", req.url));
+  if (isPublicPath && !token) {
+    console.log("Allowing access to / because no token.");
+    return NextResponse.next();
   }
-  try {
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET);
-      console.log("JWT token verified, proceeding.");
-      return NextResponse.next();
-    }
-  } catch (error) {
-    const response = NextResponse.json(
-      { error: "Invalid or expired token" },
-      { status: 401 }
-    );
 
-    response.cookies.delete("token");
+  if (isGamePage && !token) {
+    console.log("Redirecting to / because no token on /GamePage.");
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   return NextResponse.next();

@@ -1,11 +1,12 @@
-import google from "@/images/google.svg";
+"use client";
 import Image from "next/image";
-import shield from "@/images/shield.png";
+import { useRouter } from "next/navigation";
 import { UsersContext } from "@/app/page";
 import { useContext, useEffect, useState } from "react";
-import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
+  const router = useRouter();
   const context = useContext(UsersContext);
 
   if (context === null) {
@@ -33,9 +34,10 @@ export default function LoginForm() {
       const response = await request.json();
 
       if (!request.ok) {
-        setMessage(response.error);
+        toast.error(response.error);
       } else {
-        setMessage(response.message);
+        toast.success(response.message);
+        router.push(response.redirectTo);
       }
     } catch (error) {
       console.log(error);
@@ -50,7 +52,13 @@ export default function LoginForm() {
 
   return (
     <div className="h-3/4 w-2/4 bg-white rounded flex items-center flex-col gap-5 pt-3">
-      <Image alt="Shield image" src={shield} className="w-[100px]"></Image>
+      <Image
+        alt="Shield image"
+        src="/shield.png"
+        width={100}
+        height={100}
+        className="w-[100px]"
+      ></Image>
 
       <div className="flex justify-center flex-col items-center">
         <h1 className="font-mono text-md md:text-3xl">Login to Your Account</h1>
