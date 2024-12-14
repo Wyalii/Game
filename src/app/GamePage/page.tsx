@@ -1,3 +1,9 @@
+"use client";
+import GameHeader from "./components/GameHeader";
 export default function GamePage() {
-  return <div>this is game page.</div>;
+  return (
+    <div className="bg-black h-full w-full">
+      <GameHeader />
+    </div>
+  );
 }
