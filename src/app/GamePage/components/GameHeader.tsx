@@ -1,18 +1,37 @@
 "use client";
-import GetUserEmail from "@/app/lib/GetUserEmail";
-import { useState, useEffect } from "react";
 
+import { useEffect } from "react";
+import { User } from "../page";
+import { useContext } from "react";
 export default function GameHeader() {
-  const [userEmail, SetUserEmail] = useState("");
+  const context = useContext(User);
+  if (!context) {
+    return <div>Loading...</div>;
+  }
+
+  const { Coins, setCoins, email } = context;
 
   useEffect(() => {
-    const email = GetUserEmail();
-    SetUserEmail(email || "");
-  }, []);
+    if (email) {
+      FetchUserCoins();
+    }
+  }, [email]);
+
+  async function FetchUserCoins() {
+    const request = await fetch("api/users/GetUserCoins", {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+    });
+
+    const response = await request.json();
+    setCoins(response.Coins);
+    console.log(response.message);
+  }
+
   return (
     <div className="bg-white w-full h-9 flex justify-start items-center gap-6">
-      <p>User: {userEmail}</p>
-      <p>Coins:0</p>
+      <p>User: {email}</p>
+      <p>Coins: {Coins}</p>
     </div>
   );
 }
