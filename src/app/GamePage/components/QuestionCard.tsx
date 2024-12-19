@@ -41,11 +41,7 @@ export default function QuestionCard() {
 
   async function SubmitQuestion() {
     const currentQuestion = questions[currentIndex];
-    console.log(
-      currentQuestion.coin,
-      currentQuestion.id,
-      currentQuestion.answer
-    );
+
     const request = await fetch("/api/questions/SubmitQuestion", {
       method: "POST",
       body: JSON.stringify({
@@ -56,7 +52,7 @@ export default function QuestionCard() {
       }),
     });
     const response = await request.json();
-    console.log(request);
+    console.log(response);
   }
   return (
     <div className="bg-white h-[400px] w-[400px] flex flex-col items-center justify-center rounded gap-7">

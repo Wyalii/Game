@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { questionId, email, answer, coins } = body;
-    console.log(questionId, email, answer, coins);
+    console.log("this is log from body: " + questionId, email, answer, coins);
 
     if (!questionId || !email || !answer || !coins) {
       return NextResponse.json(
@@ -44,8 +44,8 @@ export async function POST(req: NextRequest) {
     }
 
     const user = FindUserByEmail[0];
-    console.log(user.coins);
-    const updatedCoins = user.coins + coins;
+    console.log(user.Coins);
+    const updatedCoins = user.Coins + coins;
 
     // Update user's coins
     const UpdateUserCoinsQuery = `
