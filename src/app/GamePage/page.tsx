@@ -1,6 +1,6 @@
 "use client";
 import GameHeader from "./components/GameHeader";
-import QuestionCard from "./components/QuestionCard";
+import Question from "./components/Question";
 import React, { createContext, useState } from "react";
 import GetUserEmail from "@/app/lib/GetUserEmail";
 import { useEffect } from "react";
@@ -26,7 +26,7 @@ export default function GamePage() {
     <User.Provider value={{ Coins, setCoins, email, setEmail }}>
       <div className="bg-fuchsia-900 h-full w-full flex flex-col gap-4 items-center">
         <GameHeader />
-        <QuestionCard />
+        <Question />
       </div>
     </User.Provider>
   );

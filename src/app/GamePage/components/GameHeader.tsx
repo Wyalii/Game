@@ -15,7 +15,7 @@ export default function GameHeader() {
     if (email) {
       FetchUserCoins();
     }
-  }, [email]);
+  }, [email, Coins]);
 
   async function FetchUserCoins() {
     const request = await fetch("api/users/GetUserCoins", {
