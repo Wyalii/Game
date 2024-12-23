@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useContext } from "react";
-import { User } from "../page";
+import { UserContext } from "@/app/lib/UserContext";
 import { toast } from "react-toastify";
 type Question = {
   id: number;
@@ -13,27 +13,29 @@ type Question = {
 };
 
 export default function Question() {
-  const context = useContext(User);
-  if (!context) {
-    return <div>Loading...</div>;
-  }
-  const { Coins, email, setCoins } = context;
+  const context = useContext(UserContext);
+
+  const { email, setCoins } = context;
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [fetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
-  const fetchQuestions = async () => {
-    const request = await fetch("/api/questions/GetQuestions");
+  const fetchQuestions = useCallback(async () => {
+    const request = await fetch("/api/questions/GetQuestions", {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+    });
+
     const response = await request.json();
-    setQuestions(response);
     if (response.length > 0) {
+      setQuestions(response);
       setCurrentQuestion(response[0]);
       shuffleAnswers(response[0]);
     }
-    console.log(response);
-  };
+  }, [email]);
 
   const shuffleAnswers = (question: Question) => {
     const allAnswers = [
@@ -58,6 +60,7 @@ export default function Question() {
   };
 
   async function SubmitAnswer() {
+    console.log(currentQuestionIndex);
     const body = {
       questionId: currentQuestion?.id,
       email: email,
@@ -72,17 +75,36 @@ export default function Question() {
     const response = await request.json();
     if (request.ok) {
       setCoins(response.updatedCoins);
-      nextQuestion();
       toast.success(response.message);
+      setFetchTrigger(true);
     } else {
       toast.error(response.error);
     }
   }
 
   useEffect(() => {
-    fetchQuestions();
-  }, []);
+    if (email) {
+      const fetchData = async () => {
+        await fetchQuestions();
+        setFetchTrigger(false);
+      };
+      fetchData();
+    }
+  }, [email, fetchQuestions]);
 
+  useEffect(() => {
+    if (fetchTrigger) {
+      const fetchData = async () => {
+        await fetchQuestions();
+        setFetchTrigger(false);
+      };
+      fetchData();
+    }
+  }, [fetchTrigger, fetchQuestions]);
+
+  if (!context) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="w-full h-full flex items-center justify-center flex-col gap-5">
       <div className="bg-yellow-400 p-5 rounded">

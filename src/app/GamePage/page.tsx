@@ -1,33 +1,28 @@
 "use client";
 import GameHeader from "./components/GameHeader";
 import Question from "./components/Question";
-import React, { createContext, useState } from "react";
+import React, { useState } from "react";
 import GetUserEmail from "@/app/lib/GetUserEmail";
 import { useEffect } from "react";
-type User = {
-  Coins: number;
-  setCoins: React.Dispatch<React.SetStateAction<number>>;
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-};
+import { UserContext } from "../lib/UserContext";
 
-export const User = createContext<User | null>(null);
 export default function GamePage() {
   const [Coins, setCoins] = useState<number>(0);
   const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     const getEmailFromToken = GetUserEmail();
+    console.log("Extracted email from token:", getEmailFromToken);
     if (getEmailFromToken) {
       setEmail(getEmailFromToken);
     }
   }, []);
   return (
-    <User.Provider value={{ Coins, setCoins, email, setEmail }}>
+    <UserContext.Provider value={{ Coins, setCoins, email, setEmail }}>
       <div className="bg-fuchsia-900 h-full w-full flex flex-col gap-4 items-center">
         <GameHeader />
         <Question />
       </div>
-    </User.Provider>
+    </UserContext.Provider>
   );
 }

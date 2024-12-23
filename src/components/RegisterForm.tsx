@@ -3,18 +3,18 @@ import Image from "next/image";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { UsersContext } from "@/app/page";
+import { ExistingUserContext } from "@/app/lib/ExistingUserContext";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const context = useContext(UsersContext);
+  const context = useContext(ExistingUserContext);
+  const [UserEmail, setUserEmail] = useState<string>("");
+  const [UserPassword, setUserPassword] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   if (context === null) {
     return <div>Loading...</div>;
   }
   const { setHasAccount } = context;
-  const [UserEmail, setUserEmail] = useState<string>("");
-  const [UserPassword, setUserPassword] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function SignUp() {
     setIsSubmitting(true);
@@ -48,7 +48,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="h-3/4 w-2/4 bg-white rounded flex items-center flex-col gap-5 pt-3">
+    <div className="w-4/5 h-auto sm:w-2/4 bg-white rounded flex items-center flex-col gap-5 p-4">
       <Image
         alt="Shield image"
         src="/shield.png"
@@ -67,7 +67,7 @@ export default function RegisterForm() {
           <input
             type="email"
             placeholder="Email"
-            className="placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"
+            className="w-full placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"
             value={UserEmail}
             onChange={(e) => setUserEmail(e.target.value)}
             disabled={isSubmitting}
@@ -78,7 +78,7 @@ export default function RegisterForm() {
           <input
             type="password"
             placeholder="Password"
-            className="placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"
+            className="w-full placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 focus:outline-none text-center bg-purple-600 text-white placeholder-white rounded"
             value={UserPassword}
             onChange={(e) => setUserPassword(e.target.value)}
             disabled={isSubmitting}
@@ -87,7 +87,7 @@ export default function RegisterForm() {
 
         <div className="w-full flex justify-center">
           <button
-            className="placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 text-center bg-purple-600 text-white placeholder-white rounded"
+            className="w-full placeholder:text-xs sm:placeholder:text-sm sm:w-1/2 max-w-xs h-10 text-center bg-purple-600 text-white placeholder-white rounded"
             onClick={SignUp}
             disabled={isSubmitting}
           >
@@ -96,7 +96,7 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-center items-center sm:gap-2">
         <div>Already have an Account?</div>
         <div className="cursor-pointer" onClick={() => setHasAccount(true)}>
           Login

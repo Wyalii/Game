@@ -54,6 +54,11 @@ export async function POST(req: NextRequest) {
       email,
     ]);
 
+    const AnsweredQuestionQuery = `
+    INSERT INTO public."AnsweredQuestions" ("answered_question_id", "user_email")
+    VALUES ($1, $2)
+  `;
+    await Database(AnsweredQuestionQuery, [questionId, email]);
     return NextResponse.json(
       {
         message: "Your answer was correct!",
