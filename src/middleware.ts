@@ -4,9 +4,6 @@ export default function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const token = req.cookies.get("token")?.value || "";
 
-  console.log("Token:", token);
-  console.log("Path:", path);
-
   const isPublicPath = path === "/";
   const isGamePage = path === "/GamePage";
 

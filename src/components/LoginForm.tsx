@@ -16,7 +16,6 @@ export default function LoginForm() {
   const { hasAccount, setHasAccount } = context;
   const [UserEmail, setUserEmail] = useState<string>("");
   const [UserPassword, setUserPassword] = useState<string>("");
-  const [Message, setMessage] = useState<string>("");
 
   async function Login() {
     try {
@@ -43,12 +42,6 @@ export default function LoginForm() {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    if (Message) {
-      console.log(Message);
-    }
-  }, [Message]);
 
   return (
     <div className="h-3/4 w-2/4 bg-white rounded flex items-center flex-col gap-5 pt-3">

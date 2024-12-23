@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { questionId, email, answer, coins } = body;
-    console.log("this is log from body: " + questionId, email, answer, coins);
 
     if (!questionId || !email || !answer || !coins) {
       return NextResponse.json(
@@ -14,7 +13,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find the question
     const FindQuestionQuery = `SELECT * FROM public."Questions" WHERE "id" = $1`;
     const FindQuestion = await Database(FindQuestionQuery, [questionId]);
 
@@ -25,14 +23,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const question = FindQuestion[0];
-
-    // Check if the provided answer is correct
-    if (question.answer.toLowerCase() !== answer.toLowerCase()) {
-      return NextResponse.json({ error: "Incorrect answer." }, { status: 400 });
-    }
-
-    // Find the user by email
     const FindUserByEmailQuery = `SELECT * FROM public."RegisteredUsers" WHERE "Email" = $1`;
     const FindUserByEmail = await Database(FindUserByEmailQuery, [email]);
 
@@ -43,11 +33,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = FindUserByEmail[0];
-    console.log(user.Coins);
-    const updatedCoins = user.Coins + coins;
+    const question = FindQuestion[0];
 
-    // Update user's coins
+    if (question.answers.real_answer.toLowerCase() !== answer.toLowerCase()) {
+      return NextResponse.json({ error: "Incorrect answer." }, { status: 400 });
+    }
+
+    const user = FindUserByEmail[0];
+
+    const updatedCoins = coins + user.Coins;
+
     const UpdateUserCoinsQuery = `
       UPDATE public."RegisteredUsers"
       SET "Coins" = $1
