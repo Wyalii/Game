@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useContext } from "react";
 import { UserContext } from "@/app/lib/UserContext";
 import { toast } from "react-toastify";
+import Image from "next/image";
 type Question = {
   id: number;
   question: string;
@@ -9,6 +10,8 @@ type Question = {
   answers: {
     real_answer: string;
     fake_answers: string[];
+    gif: string;
+    gif_wrong_answer: string;
   };
 };
 
@@ -22,6 +25,7 @@ export default function Question() {
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [fetchTrigger, setFetchTrigger] = useState<boolean>(false);
+  const [gif, setGif] = useState<string | undefined>(undefined);
 
   const fetchQuestions = useCallback(async () => {
     const request = await fetch("/api/questions/GetQuestions", {
@@ -34,6 +38,9 @@ export default function Question() {
       setQuestions(response);
       setCurrentQuestion(response[0]);
       shuffleAnswers(response[0]);
+      if (response[0].answers.gif) {
+        setGif(response[0].answers.gif);
+      }
     }
   }, [email]);
 
@@ -55,6 +62,11 @@ export default function Question() {
       const newIndex = prevIndex < questions.length - 1 ? prevIndex + 1 : 0;
       setCurrentQuestion(questions[newIndex]);
       shuffleAnswers(questions[newIndex]);
+      if (questions[newIndex].answers.gif) {
+        setGif(questions[newIndex].answers.gif);
+      } else {
+        setGif(undefined);
+      }
       return newIndex;
     });
   };
@@ -77,8 +89,10 @@ export default function Question() {
       setCoins(response.updatedCoins);
       toast.success(response.message);
       setFetchTrigger(true);
+      setGif(undefined);
     } else {
       toast.error(response.error);
+      setGif(currentQuestion?.answers.gif_wrong_answer);
     }
   }
 
@@ -106,22 +120,34 @@ export default function Question() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col gap-5">
-      <div className="bg-yellow-400 p-5 rounded">
-        <h1 className="text-5xl">Question: {currentQuestion?.question}</h1>
+    <div className="w-full max-w-[800px] h-full flex items-center justify-center flex-col gap-5">
+      {gif ? (
+        <Image
+          src={gif}
+          alt="gif"
+          height={300}
+          width={300}
+          className="rounded"
+        ></Image>
+      ) : null}
+      <div className="bg-yellow-400 p-5 rounded w-2/4 md:w-full">
+        <h1 className=" text-xl text-center md:text-5xl">
+          Question: {currentQuestion?.question}
+        </h1>
       </div>
-      <div className="w-11/12 grid grid-cols-2 grid-rows-2 gap-3">
+      <div className="w-11/12 flex flex-col  md:grid md:grid-cols-2 md:grid-rows-2 gap-3">
         {shuffledAnswers.length > 0 ? (
           <>
             {shuffledAnswers.map((answer, index) => (
-              <div key={index}>
+              <div key={index} className="w-full max-w-[800px]">
                 <input
                   type="text"
                   value={answer}
                   readOnly
-                  className="w-full p-2 rounded cursor-pointer focus:outline-none focus:bg-blue-300 hover:bg-slate-500 hover:text-white transition-colors duration-300"
+                  className="w-full text-wrap p-2 rounded cursor-pointer focus:outline-none focus:bg-blue-300 hover:bg-slate-500 hover:text-white transition-colors duration-300"
                   onClick={() => setSelectedAnswer(answer)}
                 />
+                {}
               </div>
             ))}
           </>

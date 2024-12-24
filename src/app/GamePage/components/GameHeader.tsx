@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect } from "react";
 import { UserContext } from "@/app/lib/UserContext";
 import { useContext } from "react";
@@ -15,7 +15,6 @@ export default function GameHeader() {
 
       const response = await request.json();
       setCoins(response.Coins);
-      console.log(response.message);
     }
     if (email) {
       FetchUserCoins();
@@ -29,7 +28,10 @@ export default function GameHeader() {
   return (
     <div className="bg-white w-full h-9 flex justify-start items-center gap-6">
       <p>User: {email}</p>
-      <p>Coins: {Coins}</p>
+      <div className="flex items-center justify-center gap-2">
+        <p>Coins: {Coins}</p>
+        <Image src={"/coin.gif"} alt="coin" height={20} width={20}></Image>
+      </div>
     </div>
   );
 }

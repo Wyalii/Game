@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    console.log(user.id);
+
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });

@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ExistingUserContext } from "@/app/lib/ExistingUserContext";
+import * as EmailValidator from "email-validator";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -18,31 +19,37 @@ export default function RegisterForm() {
 
   async function SignUp() {
     setIsSubmitting(true);
+    if (EmailValidator.validate(UserEmail)) {
+      try {
+        const response = await fetch("/api/users/registerUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: UserEmail,
+            password: UserPassword,
+          }),
+        });
 
-    try {
-      const response = await fetch("/api/users/registerUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: UserEmail,
-          password: UserPassword,
-        }),
-      });
+        const data = await response.json();
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast.error(data.error);
-      } else {
-        toast.success(data.message);
-        router.push(data.redirectTo);
+        if (!response.ok) {
+          toast.error(data.error);
+        } else {
+          toast.success(data.message);
+          router.push(data.redirectTo);
+          setIsSubmitting(false);
+        }
+      } catch (error) {
+        console.error("Error signing up:", error);
+        toast.error("Failed to register. Please try again.");
+        setIsSubmitting(false);
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
-      toast.error("Failed to register. Please try again.");
-    } finally {
+    } else {
+      toast.error("invalid email input.");
       setIsSubmitting(false);
     }
   }

@@ -11,7 +11,10 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "@types/js-cookie": "^3.0.6",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
+    "email-validator": "^2.0.4",
+    "email-verifier": "^0.0.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",

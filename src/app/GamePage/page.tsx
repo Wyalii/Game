@@ -12,7 +12,6 @@ export default function GamePage() {
 
   useEffect(() => {
     const getEmailFromToken = GetUserEmail();
-    console.log("Extracted email from token:", getEmailFromToken);
     if (getEmailFromToken) {
       setEmail(getEmailFromToken);
     }

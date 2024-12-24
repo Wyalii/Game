@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import Database from "@/db/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import axios from "axios";
+
+const HUNTER_API_KEY = process.env.HUNTER_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +25,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "User with that Email is already registered." },
         { status: 409 }
+      );
+    }
+
+    const emailCheckResponse = await axios.get(
+      `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${HUNTER_API_KEY}`
+    );
+    console.log(emailCheckResponse.data);
+
+    const { data } = emailCheckResponse;
+
+    if (
+      data.data.status !== "deliverable" &&
+      data.data.status !== "risky" &&
+      data.data.status !== "accept_all"
+    ) {
+      return NextResponse.json(
+        { error: "Email does not exist or is invalid" },
+        { status: 400 }
       );
     }
 

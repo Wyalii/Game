@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { ExistingUserContext } from "@/app/lib/ExistingUserContext";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
+import * as EmailValidator from "email-validator";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -18,29 +19,33 @@ export default function LoginForm() {
   const { hasAccount, setHasAccount } = context;
 
   async function Login() {
-    try {
-      console.log(hasAccount);
-      const request = await fetch("api/users/loginUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: UserEmail,
-          password: UserPassword,
-        }),
-      });
+    if (EmailValidator.validate(UserEmail)) {
+      try {
+        console.log(hasAccount);
+        const request = await fetch("api/users/loginUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: UserEmail,
+            password: UserPassword,
+          }),
+        });
 
-      const response = await request.json();
+        const response = await request.json();
 
-      if (!request.ok) {
-        toast.error(response.error);
-      } else {
-        toast.success(response.message);
-        router.push(response.redirectTo);
+        if (!request.ok) {
+          toast.error(response.error);
+        } else {
+          toast.success(response.message);
+          router.push(response.redirectTo);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      toast.error("invalid email input.");
     }
   }
 

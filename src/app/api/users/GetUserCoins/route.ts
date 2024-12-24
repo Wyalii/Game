@@ -3,7 +3,6 @@ import Database from "@/db/db";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { email } = body;
-  console.log("user email is : " + email);
   const query = `
     SELECT "Coins" 
     FROM public."RegisteredUsers" 
